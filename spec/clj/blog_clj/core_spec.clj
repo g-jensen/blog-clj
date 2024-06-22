@@ -135,4 +135,4 @@
         (should-throw (sut/generate-blogs (dissoc bare-settings :output-path))))
       
       (it "invalid wrapper target"
-          (should-throw (sut/generate-blogs (assoc bare-settings :wrapper {:target :nuh-uh})))))))
+        (should-throw (sut/generate-blogs (assoc bare-settings :wrapper {:target :nuh-uh})))))))

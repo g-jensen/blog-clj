@@ -3,22 +3,15 @@
             [clojure.string :as str]
             [hiccup-bridge.core :as bridge]
             [hiccup2.core :as hiccup]
-            [c3kit.apron.schema :as schema])
+            [c3kit.apron.schema :as schema]
+            [blog-clj.wrapper :as wrapper])
   (:import org.commonmark.parser.Parser
            (org.commonmark.renderer.html HtmlRenderer)))
 
-(def wrapper-targets #{:html :hiccup})
-
-(def default-wrapper {:target :hiccup
-                      :fn identity})
-
-(def wrapper-schema {:target {:type :keyword :coerce #(or % (:target default-wrapper)) :validate #(contains? wrapper-targets %)}
-                     :fn     {:type :fn :coerce #(or % (:fn default-wrapper))}})
-
-(def settings-schema {:input-path    {:type :string :validate schema/present? :message "must be present!"}
-                      :output-path   {:type :string :validate schema/present? :message "must be present!"}
-                      :output-suffix {:type :string}
-                      :wrapper       {:type :map :schema wrapper-schema :coerce #(or % default-wrapper)}})
+(def generate-blogs-schema {:input-path    {:type :string :validate schema/present? :message "must be present!"}
+                            :output-path   {:type :string :validate schema/present? :message "must be present!"}
+                            :output-suffix {:type :string}
+                            :wrapper       {:type :map :schema wrapper/schema :coerce #(or % wrapper/default)}})
 
 (def parser (-> (Parser/builder) (.build)))
 
@@ -54,5 +47,5 @@
     (spit (str output-path "/" new-name output-suffix) wrapped-content)))
 
 (defn generate-blogs [settings]
-  (let [settings (schema/conform! settings-schema settings)]
+  (let [settings (schema/conform! generate-blogs-schema settings)]
     (mapv #(generate-blog % settings) (get-md-files settings))))
