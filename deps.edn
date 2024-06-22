@@ -1,0 +1,15 @@
+{:paths     ["src/clj" "src/cljc" "src/cljs" "resources"]
+ :mvn/repos {"maven_central"  {:url "https://repo.maven.apache.org/maven2/"}}
+ :deps      {com.atlassian.commonmark/commonmark                       {:mvn/version "0.15.2"} ;; Markdown
+             com.atlassian.commonmark/commonmark-ext-gfm-strikethrough {:mvn/version "0.15.2"} ;; Github flavor markdown (strikethrough)
+             com.atlassian.commonmark/commonmark-ext-gfm-tables        {:mvn/version "0.15.2"} ;; Github flavor markdown (tables)
+             com.cleancoders.c3kit/apron         {:git/url "git@github.com:cleancoders/c3kit-apron.git" :git/sha "44b3e6a5e541d78f5d99fd1089b74e8bf81d075f"}
+             hiccup/hiccup                                             {:mvn/version "2.0.0-RC3"}
+             hiccup-bridge/hiccup-bridge                               {:mvn/version "1.0.1"}
+             org.clojure/clojure                                       {:mvn/version "1.11.1"}
+             org.clojure/math.combinatorics {:mvn/version "0.2.0"}}
+ :aliases   {:test     {:extra-deps  {speclj/speclj                  {:mvn/version "3.4.5"}
+                                      com.cleancoders.c3kit/scaffold {:git/url "git@github.com:cleancoders/c3kit-scaffold.git" :git/sha "173ee966970a742e08c6718c58b5d8eed934a1e5"}}
+                        :extra-paths ["dev" "spec/clj" "spec/cljc" "spec/cljs"]}
+             :run      {:main-opts ["-m" "blog-clj.main"]}
+             :spec     {:main-opts ["-m" "speclj.main" "-c"]}}}
