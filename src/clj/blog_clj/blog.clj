@@ -1,11 +1,14 @@
 (ns blog-clj.blog
-  (:require [clojure.java.io :as io]
+  (:require [blog-clj.wrapper :as wrapper]
+            [c3kit.apron.schema :as schema]
+            [clojure.java.io :as io]
             [clojure.string :as str]
             [hiccup-bridge.core :as bridge]
-            [hiccup2.core :as hiccup]
-            [c3kit.apron.schema :as schema]
-            [blog-clj.wrapper :as wrapper])
-  (:import org.commonmark.parser.Parser
+            [hiccup2.core :as hiccup])
+  (:import [org.commonmark.ext.gfm.strikethrough StrikethroughExtension]
+           [org.commonmark.ext.gfm.tables TablesExtension]
+           [org.commonmark.ext.heading.anchor HeadingAnchorExtension]
+           org.commonmark.parser.Parser
            (org.commonmark.renderer.html HtmlRenderer)))
 
 (defn reverse-name [a b]
@@ -19,11 +22,21 @@
                       :output-suffix {:type :string}
                       :wrapper       {:type :map :schema wrapper/schema :coerce #(or % wrapper/default)}})
 
-(def parser (-> (Parser/builder) (.build)))
+(def table-extension (TablesExtension/create))
+(def strikethrough-extension (StrikethroughExtension/create))
+(def heading-anchor-extension (HeadingAnchorExtension/create))
+
+(def extensions [table-extension strikethrough-extension])
+
+(def parser (-> (Parser/builder) 
+                (.extensions extensions)
+                (.build)))
 
 (defn- parse-markdown [s] (.parse parser s))
 
-(def renderer (-> (HtmlRenderer/builder) (.build)))
+(def renderer (-> (HtmlRenderer/builder) 
+                  (.extensions extensions)
+                  (.build)))
 
 (defmulti md->target (fn [target & _] target))
 
